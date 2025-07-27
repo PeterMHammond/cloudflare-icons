@@ -115,15 +115,15 @@ fn render_index_page() -> String {
         }
         .icons-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
             max-width: 1200px;
             margin: 0 auto;
         }
         .icon-card {
             background: white;
-            border-radius: 8px;
-            padding: 20px;
+            border-radius: 6px;
+            padding: 12px 8px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
@@ -150,11 +150,23 @@ fn render_index_page() -> String {
             width: auto;
             height: auto;
             display: block;
+            transition: transform 0.2s ease;
+        }
+        /* Scale different viewBox sizes to appear visually consistent */
+        .icon-container svg[viewBox="0 0 16 16"] {
+            transform: scale(2.4);
+        }
+        .icon-container svg[viewBox="0 0 24 24"] {
+            transform: scale(1.6);
+        }
+        .icon-container svg[viewBox="0 0 64 64"] {
+            transform: scale(0.6);
         }
         .icon-name {
-            font-size: 12px;
+            font-size: 11px;
             color: #666;
             word-break: break-word;
+            line-height: 1.2;
         }
         .toast {
             position: fixed;
@@ -199,14 +211,18 @@ fn render_index_page() -> String {
         
         function renderIcons(icons) {
             const grid = document.getElementById('iconsGrid');
-            grid.innerHTML = icons.map(icon => `
+            grid.innerHTML = icons.map(icon => {
+                // Remove "cloudflare-" prefix from display name, keep main "cloudflare" icon as is
+                const displayName = icon.name === 'cloudflare' ? icon.name : icon.name.replace(/^cloudflare-/, '');
+                return `
                 <div class="icon-card" onclick="copyToExcalidraw('${icon.name}')" title="Click to copy for Excalidraw">
                     <div class="icon-container">
                         ${icon.svg}
                     </div>
-                    <div class="icon-name">${icon.name}</div>
+                    <div class="icon-name">${displayName}</div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
         }
         
         function copyToExcalidraw(iconName) {
