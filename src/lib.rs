@@ -134,10 +134,22 @@ fn render_index_page() -> String {
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             border-color: #F38020;
         }
-        .icon-card svg {
+        .icon-container {
             width: 48px;
             height: 48px;
-            margin-bottom: 10px;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .icon-container svg {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            display: block;
         }
         .icon-name {
             font-size: 12px;
@@ -189,7 +201,9 @@ fn render_index_page() -> String {
             const grid = document.getElementById('iconsGrid');
             grid.innerHTML = icons.map(icon => `
                 <div class="icon-card" onclick="copyToExcalidraw('${icon.name}')" title="Click to copy for Excalidraw">
-                    ${icon.svg}
+                    <div class="icon-container">
+                        ${icon.svg}
+                    </div>
                     <div class="icon-name">${icon.name}</div>
                 </div>
             `).join('');

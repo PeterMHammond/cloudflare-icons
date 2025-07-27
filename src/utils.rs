@@ -9,7 +9,6 @@ pub fn set_panic_hook() {
 }
 
 pub fn standardize_svg(svg: &str) -> String {
-    // Only standardize the fill color to Cloudflare orange, preserve original viewBox
     let mut standardized = svg.to_string();
     
     // Replace fill colors with Cloudflare orange
@@ -17,6 +16,10 @@ pub fn standardize_svg(svg: &str) -> String {
     
     // Also handle currentColor
     standardized = standardized.replace("currentColor", "#F38020");
+    
+    // Remove width and height attributes to allow CSS sizing
+    standardized = remove_svg_attribute(&standardized, "width");
+    standardized = remove_svg_attribute(&standardized, "height");
     
     standardized
 }
@@ -68,6 +71,32 @@ fn regex_replace(text: &str, pattern: &str, replacement: &str) -> String {
         }
         final_result.push_str(&working);
         result = final_result;
+    }
+    
+    result
+}
+
+fn remove_svg_attribute(svg: &str, attr: &str) -> String {
+    let mut result = svg.to_string();
+    
+    // Find and remove the attribute
+    while let Some(start) = result.find(&format!("{}=\"", attr)) {
+        if let Some(end) = result[start..].find("\"") {
+            if let Some(next_quote) = result[start + end + 1..].find("\"") {
+                // Remove the attribute including leading space if present
+                let attr_start = if start > 0 && &result[start-1..start] == " " {
+                    start - 1
+                } else {
+                    start
+                };
+                let attr_end = start + end + 1 + next_quote + 1;
+                result = format!("{}{}", &result[..attr_start], &result[attr_end..]);
+            } else {
+                break;
+            }
+        } else {
+            break;
+        }
     }
     
     result
