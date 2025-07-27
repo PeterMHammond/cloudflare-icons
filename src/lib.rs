@@ -86,7 +86,7 @@ fn render_index_page() -> String {
             margin-bottom: 30px;
         }
         .controls {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto 30px;
             display: flex;
             gap: 10px;
@@ -115,19 +115,20 @@ fn render_index_page() -> String {
         }
         .icons-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 10px;
-            max-width: 1200px;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            max-width: 1400px;
             margin: 0 auto;
         }
         .icon-card {
             background: white;
-            border-radius: 6px;
-            padding: 12px 8px;
+            border-radius: 8px;
+            padding: 20px 15px 15px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
-            border: 2px solid transparent;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         .icon-card:hover {
             transform: translateY(-2px);
@@ -135,14 +136,13 @@ fn render_index_page() -> String {
             border-color: #F38020;
         }
         .icon-container {
-            width: 48px;
-            height: 48px;
-            margin: 0 auto 10px;
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            overflow: hidden;
         }
         .icon-container svg {
             max-width: 100%;
@@ -150,23 +150,13 @@ fn render_index_page() -> String {
             width: auto;
             height: auto;
             display: block;
-            transition: transform 0.2s ease;
-        }
-        /* Scale different viewBox sizes to appear visually consistent */
-        .icon-container svg[viewBox="0 0 16 16"] {
-            transform: scale(2.4);
-        }
-        .icon-container svg[viewBox="0 0 24 24"] {
-            transform: scale(1.6);
-        }
-        .icon-container svg[viewBox="0 0 64 64"] {
-            transform: scale(0.6);
+            fill: #F38020;
         }
         .icon-name {
-            font-size: 11px;
+            font-size: 13px;
             color: #666;
             word-break: break-word;
-            line-height: 1.2;
+            line-height: 1.3;
         }
         .toast {
             position: fixed;
@@ -215,7 +205,7 @@ fn render_index_page() -> String {
                 // Remove "cloudflare-" prefix from display name, keep main "cloudflare" icon as is
                 const displayName = icon.name === 'cloudflare' ? icon.name : icon.name.replace(/^cloudflare-/, '');
                 return `
-                <div class="icon-card" onclick="copyToExcalidraw('${icon.name}')" title="Click to copy for Excalidraw">
+                <div class="icon-card" onclick="copyToExcalidraw('${icon.name}')" title="${icon.name} - Click to copy for Excalidraw">
                     <div class="icon-container">
                         ${icon.svg}
                     </div>
