@@ -135,8 +135,8 @@ fn render_index_page() -> String {
             border-color: #F38020;
         }
         .icon-card svg {
-            width: 24px;
-            height: 24px;
+            width: 48px;
+            height: 48px;
             margin-bottom: 10px;
         }
         .icon-name {
@@ -256,16 +256,16 @@ fn svg_to_excalidraw(svg: &str) -> String {
 }
 
 fn create_excalidraw_element(name: &str, svg: &str, index: usize) -> serde_json::Value {
-    let x = (index % 10) as f64 * 100.0;
-    let y = (index / 10) as f64 * 100.0;
+    let x = (index % 10) as f64 * 150.0;
+    let y = (index / 10) as f64 * 150.0;
     
     serde_json::json!({
         "id": format!("cf-icon-{}", name),
         "type": "image",
         "x": x,
         "y": y,
-        "width": 24,
-        "height": 24,
+        "width": 48,
+        "height": 48,
         "angle": 0,
         "strokeColor": "transparent",
         "backgroundColor": "transparent",

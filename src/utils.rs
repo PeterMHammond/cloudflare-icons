@@ -9,28 +9,8 @@ pub fn set_panic_hook() {
 }
 
 pub fn standardize_svg(svg: &str) -> String {
-    // Parse and standardize SVG to ensure consistent 24x24 size and Cloudflare orange
+    // Only standardize the fill color to Cloudflare orange, preserve original viewBox
     let mut standardized = svg.to_string();
-    
-    // Replace viewBox to ensure 24x24
-    if standardized.contains("viewBox") {
-        standardized = regex_replace(&standardized, r#"viewBox="[^"]*""#, r#"viewBox="0 0 24 24""#);
-    } else {
-        standardized = standardized.replace("<svg", r#"<svg viewBox="0 0 24 24""#);
-    }
-    
-    // Set fixed width and height
-    if standardized.contains("width=") {
-        standardized = regex_replace(&standardized, r#"width="[^"]*""#, r#"width="24""#);
-    } else {
-        standardized = standardized.replace("<svg", r#"<svg width="24""#);
-    }
-    
-    if standardized.contains("height=") {
-        standardized = regex_replace(&standardized, r#"height="[^"]*""#, r#"height="24""#);
-    } else {
-        standardized = standardized.replace("<svg", r#"<svg height="24""#);
-    }
     
     // Replace fill colors with Cloudflare orange
     standardized = regex_replace(&standardized, r#"fill="[^"]*""#, r##"fill="#F38020""##);
