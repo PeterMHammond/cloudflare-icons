@@ -122,41 +122,65 @@ fn render_index_page() -> String {
         }
         .icon-card {
             background: white;
-            border-radius: 8px;
-            padding: 20px 15px 15px;
-            text-align: center;
+            border-radius: 4px;
+            padding: 10px;
             cursor: pointer;
             transition: all 0.2s;
             border: 1px solid #e0e0e0;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            position: relative;
         }
         .icon-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             border-color: #F38020;
         }
+        .icon-card:hover::after {
+            content: attr(data-name);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 8px;
+            padding: 6px 10px;
+            background: #333;
+            color: white;
+            font-size: 12px;
+            border-radius: 4px;
+            white-space: nowrap;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .icon-card:hover::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 3px;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #333;
+            z-index: 10;
+        }
         .icon-container {
-            width: 64px;
-            height: 64px;
-            margin: 0 auto 12px;
+            width: 80px;
+            height: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
+            border: 1px solid #f0f0f0;
+            background: #fafafa;
         }
         .icon-container svg {
-            max-width: 100%;
-            max-height: 100%;
+            max-width: 90%;
+            max-height: 90%;
             width: auto;
             height: auto;
             display: block;
             fill: #F38020;
-        }
-        .icon-name {
-            font-size: 13px;
-            color: #666;
-            word-break: break-word;
-            line-height: 1.3;
         }
         .toast {
             position: fixed;
@@ -205,11 +229,10 @@ fn render_index_page() -> String {
                 // Remove "cloudflare-" prefix from display name, keep main "cloudflare" icon as is
                 const displayName = icon.name === 'cloudflare' ? icon.name : icon.name.replace(/^cloudflare-/, '');
                 return `
-                <div class="icon-card" onclick="copyToExcalidraw('${icon.name}')" title="${icon.name} - Click to copy for Excalidraw">
+                <div class="icon-card" data-name="${displayName}" onclick="copyToExcalidraw('${icon.name}')" title="Click to copy for Excalidraw">
                     <div class="icon-container">
                         ${icon.svg}
                     </div>
-                    <div class="icon-name">${displayName}</div>
                 </div>
             `;
             }).join('');
