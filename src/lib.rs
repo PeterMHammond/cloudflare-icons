@@ -5,7 +5,10 @@ use base64::{Engine as _, engine::general_purpose};
 mod icons;
 mod utils;
 
-use icons::{get_icon_svg, list_icons};
+#[cfg(test)]
+mod test_icons;
+
+use icons::{get_icon_svg, get_icon_data, list_icons};
 use utils::standardize_svg;
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -13,6 +16,7 @@ struct Icon {
     name: String,
     svg: String,
     excalidraw: String,
+    doc_url: String,
 }
 
 #[event(fetch)]
@@ -28,12 +32,17 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
         .get_async("/api/icons", |_req, _ctx| async move {
             let icons = list_icons();
             let icon_data: Vec<Icon> = icons.iter().map(|name| {
-                let svg = get_icon_svg(name).unwrap_or_default();
+                let icon_info = get_icon_data(name);
+                let (svg, doc_url) = match icon_info {
+                    Some(data) => (data.svg.to_string(), data.doc_url.to_string()),
+                    None => (String::new(), String::new()),
+                };
                 let standardized = standardize_svg(&svg);
                 Icon {
                     name: name.to_string(),
                     svg: standardized.clone(),
                     excalidraw: svg_to_excalidraw(&standardized),
+                    doc_url,
                 }
             }).collect();
             
@@ -115,27 +124,28 @@ fn render_index_page() -> String {
         }
         .icons-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
             max-width: 1400px;
             margin: 0 auto;
         }
-        .icon-card {
-            background: white;
-            border-radius: 4px;
-            padding: 10px;
+        .icon-container {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #e0e0e0;
+            background: #fafafa;
             cursor: pointer;
             transition: all 0.2s;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             position: relative;
         }
-        .icon-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        .icon-container:hover {
             border-color: #F38020;
+            background: #fff;
         }
-        .icon-card:hover::after {
+        .icon-container:hover::after {
             content: attr(data-name);
             position: absolute;
             bottom: 100%;
@@ -151,7 +161,7 @@ fn render_index_page() -> String {
             z-index: 10;
             pointer-events: none;
         }
-        .icon-card:hover::before {
+        .icon-container:hover::before {
             content: '';
             position: absolute;
             bottom: 100%;
@@ -164,15 +174,6 @@ fn render_index_page() -> String {
             border-right: 5px solid transparent;
             border-top: 5px solid #333;
             z-index: 10;
-        }
-        .icon-container {
-            width: 80px;
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #f0f0f0;
-            background: #fafafa;
         }
         .icon-container svg {
             max-width: 90%;
@@ -229,10 +230,8 @@ fn render_index_page() -> String {
                 // Remove "cloudflare-" prefix from display name, keep main "cloudflare" icon as is
                 const displayName = icon.name === 'cloudflare' ? icon.name : icon.name.replace(/^cloudflare-/, '');
                 return `
-                <div class="icon-card" data-name="${displayName}" onclick="copyToExcalidraw('${icon.name}')" title="Click to copy for Excalidraw">
-                    <div class="icon-container">
-                        ${icon.svg}
-                    </div>
+                <div class="icon-container" data-name="${displayName}" data-icon-name="${icon.name}" title="Left-click: Open docs | Right-click: Copy SVG">
+                    ${icon.svg}
                 </div>
             `;
             }).join('');
@@ -285,6 +284,36 @@ fn render_index_page() -> String {
                 icon.name.toLowerCase().includes(query)
             );
             renderIcons(filtered);
+        });
+        
+        // Add event listeners for left-click and right-click
+        document.addEventListener('click', (e) => {
+            const iconContainer = e.target.closest('.icon-container');
+            if (iconContainer) {
+                e.preventDefault();
+                const iconName = iconContainer.getAttribute('data-icon-name');
+                const icon = allIcons.find(i => i.name === iconName);
+                if (icon && icon.doc_url) {
+                    window.open(icon.doc_url, '_blank');
+                }
+            }
+        });
+        
+        document.addEventListener('contextmenu', (e) => {
+            const iconContainer = e.target.closest('.icon-container');
+            if (iconContainer) {
+                e.preventDefault();
+                const iconName = iconContainer.getAttribute('data-icon-name');
+                const icon = allIcons.find(i => i.name === iconName);
+                if (icon) {
+                    navigator.clipboard.writeText(icon.svg).then(() => {
+                        showToast(`Copied ${iconName} SVG to clipboard`);
+                    }).catch(err => {
+                        console.error('Failed to copy:', err);
+                        showToast('Failed to copy to clipboard');
+                    });
+                }
+            }
         });
         
         loadIcons();

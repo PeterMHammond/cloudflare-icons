@@ -28,3 +28,9 @@ Thumbs.db
 # Wrangler
 .wrangler/
 .dev.vars
+
+# Playwright
+test-results/
+playwright-report/
+tests/screenshots/
+playwright/.cache/

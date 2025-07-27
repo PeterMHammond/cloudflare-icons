@@ -32,5 +32,3 @@ features = [
 opt-level = "s"
 lto = true
 
-[package.metadata.wasm-opt]
-wasm-opt = false

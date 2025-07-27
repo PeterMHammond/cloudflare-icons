@@ -21,6 +21,9 @@ pub fn standardize_svg(svg: &str) -> String {
     standardized = remove_svg_attribute(&standardized, "width");
     standardized = remove_svg_attribute(&standardized, "height");
     
+    // Normalize viewBox to consistent size
+    standardized = normalize_viewbox(&standardized);
+    
     standardized
 }
 
@@ -100,4 +103,91 @@ fn remove_svg_attribute(svg: &str, attr: &str) -> String {
     }
     
     result
+}
+
+fn normalize_viewbox(svg: &str) -> String {
+    // Target viewBox size for consistency
+    const TARGET_SIZE: f64 = 48.0;
+    
+    // Extract current viewBox
+    if let Some(viewbox_start) = svg.find("viewBox=\"") {
+        let viewbox_value_start = viewbox_start + 9;
+        if let Some(viewbox_end) = svg[viewbox_value_start..].find("\"") {
+            let viewbox_value = &svg[viewbox_value_start..viewbox_value_start + viewbox_end];
+            
+            // Parse viewBox values (expecting "min_x min_y width height")
+            let parts: Vec<&str> = viewbox_value.split_whitespace().collect();
+            if parts.len() == 4 {
+                if let (Ok(min_x), Ok(min_y), Ok(width), Ok(height)) = (
+                    parts[0].parse::<f64>(),
+                    parts[1].parse::<f64>(),
+                    parts[2].parse::<f64>(),
+                    parts[3].parse::<f64>()
+                ) {
+                    // If already the target size, return as-is
+                    if width == TARGET_SIZE && height == TARGET_SIZE {
+                        return svg.to_string();
+                    }
+                    
+                    // Calculate scale factor
+                    let scale = TARGET_SIZE / width.max(height);
+                    
+                    // Create new viewBox
+                    let new_viewbox = format!("viewBox=\"0 0 {} {}\"", TARGET_SIZE, TARGET_SIZE);
+                    
+                    // Replace old viewBox with new one
+                    let mut result = svg.to_string();
+                    result = result.replace(
+                        &format!("viewBox=\"{}\"", viewbox_value),
+                        &new_viewbox
+                    );
+                    
+                    // If the original viewBox wasn't square or had non-zero min values,
+                    // we need to wrap the content in a transform group
+                    if width != height || min_x != 0.0 || min_y != 0.0 {
+                        // Calculate centering offsets for non-square SVGs
+                        let scaled_width = width * scale;
+                        let scaled_height = height * scale;
+                        let offset_x = (TARGET_SIZE - scaled_width) / 2.0 - min_x * scale;
+                        let offset_y = (TARGET_SIZE - scaled_height) / 2.0 - min_y * scale;
+                        
+                        // Find where to insert the transform group
+                        if result.find(">").is_some() {
+                            let transform = format!(
+                                "><g transform=\"translate({:.3} {:.3}) scale({:.3})\">",
+                                offset_x, offset_y, scale
+                            );
+                            result = result.replacen(">", &transform, 1);
+                            
+                            // Close the group before closing svg tag
+                            if let Some(close_svg) = result.rfind("</svg>") {
+                                result.insert_str(close_svg, "</g>");
+                            }
+                        }
+                    } else {
+                        // For square SVGs with 0,0 origin, just scale the content
+                        if scale != 1.0 {
+                            if result.find(">").is_some() {
+                                let transform = format!(
+                                    "><g transform=\"scale({:.3})\">",
+                                    scale
+                                );
+                                result = result.replacen(">", &transform, 1);
+                                
+                                // Close the group before closing svg tag
+                                if let Some(close_svg) = result.rfind("</svg>") {
+                                    result.insert_str(close_svg, "</g>");
+                                }
+                            }
+                        }
+                    }
+                    
+                    return result;
+                }
+            }
+        }
+    }
+    
+    // If we couldn't parse viewBox, return original
+    svg.to_string()
 }
