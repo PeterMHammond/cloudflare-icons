@@ -1,0 +1,12 @@
+{
+  "name": "cloudflare-icons-extractor",
+  "version": "1.0.0",
+  "description": "Extract Cloudflare icons for Rust/WASM viewer",
+  "scripts": {
+    "extract-icons": "node extract-icons.js"
+  },
+  "devDependencies": {
+    "@cloudflare/component-icon": "*",
+    "simple-icons": "*"
+  }
+}

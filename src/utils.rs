@@ -1,0 +1,94 @@
+use std::sync::Once;
+
+static SET_PANIC_HOOK: Once = Once::new();
+
+pub fn set_panic_hook() {
+    SET_PANIC_HOOK.call_once(|| {
+        console_error_panic_hook::set_once();
+    });
+}
+
+pub fn standardize_svg(svg: &str) -> String {
+    // Parse and standardize SVG to ensure consistent 24x24 size and Cloudflare orange
+    let mut standardized = svg.to_string();
+    
+    // Replace viewBox to ensure 24x24
+    if standardized.contains("viewBox") {
+        standardized = regex_replace(&standardized, r#"viewBox="[^"]*""#, r#"viewBox="0 0 24 24""#);
+    } else {
+        standardized = standardized.replace("<svg", r#"<svg viewBox="0 0 24 24""#);
+    }
+    
+    // Set fixed width and height
+    if standardized.contains("width=") {
+        standardized = regex_replace(&standardized, r#"width="[^"]*""#, r#"width="24""#);
+    } else {
+        standardized = standardized.replace("<svg", r#"<svg width="24""#);
+    }
+    
+    if standardized.contains("height=") {
+        standardized = regex_replace(&standardized, r#"height="[^"]*""#, r#"height="24""#);
+    } else {
+        standardized = standardized.replace("<svg", r#"<svg height="24""#);
+    }
+    
+    // Replace fill colors with Cloudflare orange
+    standardized = regex_replace(&standardized, r#"fill="[^"]*""#, r##"fill="#F38020""##);
+    
+    // Also handle currentColor
+    standardized = standardized.replace("currentColor", "#F38020");
+    
+    standardized
+}
+
+fn regex_replace(text: &str, pattern: &str, replacement: &str) -> String {
+    // Simple regex-like replacement without regex crate
+    let mut result = text.to_string();
+    
+    // This is a simplified implementation - in production you'd use the regex crate
+    // For now, we'll do basic string replacement
+    if pattern.contains("viewBox=") {
+        if let Some(start) = result.find("viewBox=\"") {
+            if let Some(end) = result[start+9..].find("\"") {
+                let before = &result[..start];
+                let after = &result[start+9+end+1..];
+                result = format!("{}{}{}", before, replacement, after);
+            }
+        }
+    } else if pattern.contains("width=") {
+        if let Some(start) = result.find("width=\"") {
+            if let Some(end) = result[start+7..].find("\"") {
+                let before = &result[..start];
+                let after = &result[start+7+end+1..];
+                result = format!("{}{}{}", before, replacement, after);
+            }
+        }
+    } else if pattern.contains("height=") {
+        if let Some(start) = result.find("height=\"") {
+            if let Some(end) = result[start+8..].find("\"") {
+                let before = &result[..start];
+                let after = &result[start+8+end+1..];
+                result = format!("{}{}{}", before, replacement, after);
+            }
+        }
+    } else if pattern.contains("fill=") {
+        // Replace all fill attributes
+        let mut working = result.clone();
+        let mut final_result = String::new();
+        
+        while let Some(start) = working.find("fill=\"") {
+            final_result.push_str(&working[..start]);
+            final_result.push_str(replacement);
+            
+            if let Some(end) = working[start+6..].find("\"") {
+                working = working[start+6+end+1..].to_string();
+            } else {
+                break;
+            }
+        }
+        final_result.push_str(&working);
+        result = final_result;
+    }
+    
+    result
+}
