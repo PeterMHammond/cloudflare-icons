@@ -96,6 +96,8 @@ fn normalize_viewbox(svg: &str) -> String {
     else if !result.contains("viewBox=") {
         result = result.replace("<svg", r#"<svg viewBox="0 0 48 48""#);
     }
+    // Don't modify viewBox if it already has one - respect the original viewBox
+    // This allows icons to have their proper 16x16 or 48x48 viewBoxes
     
     result
 }
