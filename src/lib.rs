@@ -164,11 +164,7 @@ fn render_index_page() -> String {
             color: white;
             font-size: 11px;
             border-radius: 4px;
-            white-space: normal;
-            max-width: 320px;
-            word-wrap: break-word;
-            line-height: 1.3;
-            text-align: left;
+            white-space: nowrap;
             z-index: 10;
             pointer-events: none;
         }

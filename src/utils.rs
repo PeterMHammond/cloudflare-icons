@@ -25,8 +25,8 @@ pub fn standardize_svg(svg: &str) -> String {
     standardized = remove_svg_attribute(&standardized, "width");
     standardized = remove_svg_attribute(&standardized, "height");
     
-    // Ensure consistent viewBox
-    standardized = ensure_viewbox(&standardized);
+    // Normalize viewBox to ensure consistent sizing
+    standardized = normalize_viewbox(&standardized);
     
     standardized
 }
@@ -80,12 +80,43 @@ fn remove_svg_attribute(svg: &str, attr: &str) -> String {
     result
 }
 
-fn ensure_viewbox(svg: &str) -> String {
-    // Ensure SVG has a viewBox for responsive scaling
-    if svg.contains("viewBox=") {
-        svg.to_string()
-    } else {
-        // Add a default 48x48 viewBox if none exists
-        svg.replace("<svg", r#"<svg viewBox="0 0 48 48""#)
+fn normalize_viewbox(svg: &str) -> String {
+    let mut result = svg.to_string();
+    
+    // Check if it's the 1.1.1.1 icon (it has path data that goes beyond viewBox)
+    if result.contains("M13 15.372") && result.contains("V57") {
+        // Adjust viewBox to fit the actual content
+        result = result.replace("viewBox=\"0 0 48 48\"", "viewBox=\"0 0 60 60\"");
     }
+    // Check for icons with transform scales that need normalization
+    else if result.contains("<g transform=\"scale(") {
+        result = apply_transform_to_paths(&result);
+    }
+    // Ensure SVG has a viewBox for responsive scaling
+    else if !result.contains("viewBox=") {
+        result = result.replace("<svg", r#"<svg viewBox="0 0 48 48""#);
+    }
+    
+    result
+}
+
+
+fn apply_transform_to_paths(svg: &str) -> String {
+    // For SVGs with transform scales, we'll keep the transform
+    // but adjust the viewBox to make the icon display at a consistent size
+    let mut result = svg.to_string();
+    
+    // Icons with scale(3.000) are too small, so we need to zoom in the viewBox
+    if result.contains("transform=\"scale(3.000)\"") {
+        // These icons have 16x16 content scaled up to 48x48
+        // We'll adjust the viewBox to show a smaller area, making the icon appear larger
+        result = result.replace("viewBox=\"0 0 48 48\"", "viewBox=\"-8 -8 32 32\"");
+    } 
+    // Handle Pipelines icon with translate and scale
+    else if result.contains("transform=\"translate(1.412 0.000) scale(2.824)\"") {
+        // This icon needs special handling
+        result = result.replace("viewBox=\"0 0 48 48\"", "viewBox=\"-4 -4 25 25\"");
+    }
+    
+    result
 }
