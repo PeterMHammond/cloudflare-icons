@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Extract Cloudflare icons for Rust/WASM viewer",
   "scripts": {
-    "extract-icons": "node extract-icons.js",
+    "extract-icons:cdn": "node scripts/extract-from-cdn.js",
+    "extract-icons:playwright": "node scripts/extract-svgs-playwright.js",
     "test": "playwright test",
     "test:ui": "playwright test --ui",
     "test:headed": "playwright test --headed"
@@ -11,6 +12,8 @@
   "devDependencies": {
     "@cloudflare/component-icon": "*",
     "@playwright/test": "^1.54.1",
-    "simple-icons": "*"
+    "simple-icons": "*",
+    "puppeteer": "^23.0.0",
+    "jsdom": "^25.0.0"
   }
 }

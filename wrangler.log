@@ -1,0 +1,76 @@
+
+ ⛅️ wrangler 4.26.0
+───────────────────
+[custom build] Running: cargo install -q worker-build && worker-build --release
+[custom build] [INFO]: 🎯  Checking for the Wasm target...
+[custom build] 
+[custom build] [INFO]: 🌀  Compiling to Wasm...
+[custom build] 
+[custom build]     Finished `release` profile [optimized] target(s) in 0.07s
+[custom build] 
+[custom build] [INFO]: ⬇️  Installing wasm-bindgen...
+[custom build] 
+[custom build] [INFO]: Optimizing wasm binaries with `wasm-opt`...
+[custom build] 
+[custom build] [INFO]: Optional fields missing from Cargo.toml: 'description', 'repository', and 'license'. These are not necessary, but recommended
+[custom build] 
+[custom build] [INFO]: ✨   Done in 2.38s
+[custom build] [INFO]: 📦   Your wasm pkg is ready to publish at /home/peter/projects/cloudflare/cloudflare-icons/build.
+[custom build] 
+[custom build] 
+[custom build]   shim.mjs  14.6kb
+[custom build] 
+[custom build] ⚡ Done in 4ms
+[custom build] 
+Your Worker has access to the following bindings:
+Binding                                                    Resource                  Mode
+env.CACHE (your-kv-namespace-preview-id)                   KV Namespace              local
+env.ICONS (cloudflare-icons)                               R2 Bucket                 local
+env.WORKERS_RS_VERSION ("0.3.0")                           Environment Variable      local
+
+The file src changed, restarting build...
+[custom build] Running: cargo install -q worker-build && worker-build --release
+[custom build] [INFO]: 🎯  Checking for the Wasm target...
+[custom build] 
+[custom build] [INFO]: 🌀  Compiling to Wasm...
+[custom build] 
+[custom build]     Finished `release` profile [optimized] target(s) in 0.06s
+[custom build] 
+[custom build] [INFO]: ⬇️  Installing wasm-bindgen...
+[custom build] 
+[custom build] [INFO]: Optimizing wasm binaries with `wasm-opt`...
+[custom build] 
+[custom build] [INFO]: Optional fields missing from Cargo.toml: 'description', 'repository', and 'license'. These are not necessary, but recommended
+[custom build] 
+[custom build] [INFO]: ✨   Done in 2.96s
+[custom build] [INFO]: 📦   Your wasm pkg is ready to publish at /home/peter/projects/cloudflare/cloudflare-icons/build.
+[custom build] 
+[custom build] 
+[custom build]   shim.mjs  14.6kb
+[custom build] 
+[custom build] ⚡ Done in 5ms
+[custom build] 
+⎔ Starting local server...
+[wrangler:info] Ready on http://localhost:8787
+[wrangler:info] GET / 200 OK (15ms)
+[wrangler:info] GET /api/icons 200 OK (6ms)
+[wrangler:info] GET / 200 OK (3ms)
+[wrangler:info] GET /api/icons 200 OK (5ms)
+[wrangler:info] GET / 200 OK (3ms)
+[wrangler:info] GET /api/icons 200 OK (5ms)
+[wrangler:info] GET / 200 OK (3ms)
+[wrangler:info] GET /api/icons 200 OK (5ms)
+[wrangler:info] GET / 200 OK (3ms)
+[wrangler:info] GET /api/icons 200 OK (5ms)
+[wrangler:info] GET / 200 OK (2ms)
+[wrangler:info] GET /api/icons 200 OK (5ms)
+Error: ENOENT: no such file or directory, utime '/home/peter/.config/.wrangler/registry/cloudflare-icons'
+    at utimesSync (node:fs:2204:11)
+    at Timeout._onTimeout (/home/peter/.nvm/versions/node/v22.16.0/lib/node_modules/wrangler/wrangler-dist/cli.js:179751:39)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'utime',
+  path: '/home/peter/.config/.wrangler/registry/cloudflare-icons'
+}

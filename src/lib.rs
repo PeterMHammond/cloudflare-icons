@@ -5,8 +5,6 @@ use base64::{Engine as _, engine::general_purpose};
 mod icons;
 mod utils;
 
-#[cfg(test)]
-mod test_icons;
 
 use icons::{get_icon_svg, get_icon_data, list_icons};
 use utils::standardize_svg;
@@ -16,6 +14,7 @@ struct Icon {
     name: String,
     svg: String,
     excalidraw: String,
+    description: String,
     doc_url: String,
 }
 
@@ -33,16 +32,24 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
             let icons = list_icons();
             let icon_data: Vec<Icon> = icons.iter().map(|name| {
                 let icon_info = get_icon_data(name);
-                let (svg, doc_url) = match icon_info {
-                    Some(data) => (data.svg.to_string(), data.doc_url.to_string()),
-                    None => (String::new(), String::new()),
-                };
-                let standardized = standardize_svg(&svg);
-                Icon {
-                    name: name.to_string(),
-                    svg: standardized.clone(),
-                    excalidraw: svg_to_excalidraw(&standardized),
-                    doc_url,
+                match icon_info {
+                    Some(data) => {
+                        let standardized = standardize_svg(&data.svg);
+                        Icon {
+                            name: data.name.to_string(),
+                            svg: standardized.clone(),
+                            excalidraw: svg_to_excalidraw(&standardized),
+                            description: data.description.to_string(),
+                            doc_url: data.doc_url.to_string(),
+                        }
+                    },
+                    None => Icon {
+                        name: name.to_string(),
+                        svg: String::new(),
+                        excalidraw: String::new(),
+                        description: "Cloudflare product".to_string(),
+                        doc_url: "https://developers.cloudflare.com/".to_string(),
+                    },
                 }
             }).collect();
             
@@ -146,18 +153,22 @@ fn render_index_page() -> String {
             background: #fff;
         }
         .icon-container:hover::after {
-            content: attr(data-name);
+            content: attr(data-name) ": " attr(data-description);
             position: absolute;
             bottom: 100%;
             left: 50%;
             transform: translateX(-50%);
             margin-bottom: 8px;
-            padding: 6px 10px;
+            padding: 8px 12px;
             background: #333;
             color: white;
-            font-size: 12px;
+            font-size: 11px;
             border-radius: 4px;
-            white-space: nowrap;
+            white-space: normal;
+            max-width: 320px;
+            word-wrap: break-word;
+            line-height: 1.3;
+            text-align: left;
             z-index: 10;
             pointer-events: none;
         }
@@ -227,10 +238,8 @@ fn render_index_page() -> String {
         function renderIcons(icons) {
             const grid = document.getElementById('iconsGrid');
             grid.innerHTML = icons.map(icon => {
-                // Remove "cloudflare-" prefix from display name, keep main "cloudflare" icon as is
-                const displayName = icon.name === 'cloudflare' ? icon.name : icon.name.replace(/^cloudflare-/, '');
                 return `
-                <div class="icon-container" data-name="${displayName}" data-icon-name="${icon.name}" title="Left-click: Open docs | Right-click: Copy SVG">
+                <div class="icon-container" data-name="${icon.name}" data-description="${icon.description}" data-icon-name="${icon.name}" data-doc-url="${icon.doc_url}" title="Left-click: Open docs | Right-click: Copy SVG">
                     ${icon.svg}
                 </div>
             `;
@@ -291,10 +300,9 @@ fn render_index_page() -> String {
             const iconContainer = e.target.closest('.icon-container');
             if (iconContainer) {
                 e.preventDefault();
-                const iconName = iconContainer.getAttribute('data-icon-name');
-                const icon = allIcons.find(i => i.name === iconName);
-                if (icon && icon.doc_url) {
-                    window.open(icon.doc_url, '_blank');
+                const docUrl = iconContainer.getAttribute('data-doc-url');
+                if (docUrl) {
+                    window.open(docUrl, '_blank');
                 }
             }
         });
@@ -315,6 +323,7 @@ fn render_index_page() -> String {
                 }
             }
         });
+        
         
         loadIcons();
     </script>
