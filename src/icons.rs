@@ -1,5 +1,5 @@
 // Generated Cloudflare icons from official sources
-// Total icons: 47
+// Total icons: 63
 
 use std::collections::HashMap;
 use serde::{Serialize, Deserialize};
@@ -17,9 +17,16 @@ pub fn list_icons() -> Vec<&'static str> {
         "1.1.1.1",
         "access",
         "ai-gateway",
+        "analytics-engine",
+        "api-shield",
+        "argo",
+        "browser-isolation",
         "browser-rendering",
         "cache",
+        "cache-reserve",
+        "casb",
         "cloudflare",
+        "cloudflare-one",
         "cloudflare-pages",
         "cloudflare-tunnel",
         "cloudflare-workers",
@@ -27,28 +34,37 @@ pub fn list_icons() -> Vec<&'static str> {
         "d1",
         "ddos-protection",
         "dex",
+        "dlp",
         "dns",
+        "dnssec",
+        "durable-objects",
         "email-routing",
         "email-security",
         "gateway",
         "hyperdrive",
         "images",
+        "kv",
         "load-balancing",
+        "logs",
         "magic-firewall",
         "magic-transit",
         "magic-wan",
-        "analytics-engine",
+        "network-interconnect",
+        "page-shield",
         "pages",
         "pipelines",
         "pub-sub",
         "queues",
         "r2",
+        "radar",
         "registrar",
         "ruleset-engine",
         "security-center",
         "spectrum",
+        "ssl",
         "ssl-tls",
         "stream",
+        "time-services",
         "turnstile",
         "vectorize",
         "waf",
@@ -98,6 +114,34 @@ fn get_icons_map() -> HashMap<&'static str, IconData> {
         doc_url: "https://developers.cloudflare.com/ai-gateway/",
     });
     
+    icons.insert("analytics-engine", IconData {
+        svg: include_str!("../icons/analytics-engine.svg"),
+        name: "Analytics Engine",
+        description: "Build SQL-compatible, scalable time-series analytics without limits.",
+        doc_url: "https://developers.cloudflare.com/analytics/analytics-engine/",
+    });
+    
+    icons.insert("api-shield", IconData {
+        svg: include_str!("../icons/api-shield.svg"),
+        name: "API Shield",
+        description: "Protect your API endpoints from abuse and attacks.",
+        doc_url: "https://developers.cloudflare.com/api-shield/",
+    });
+    
+    icons.insert("argo", IconData {
+        svg: include_str!("../icons/argo.svg"),
+        name: "Argo",
+        description: "Accelerate traffic across Cloudflare's network.",
+        doc_url: "https://developers.cloudflare.com/argo-smart-routing/",
+    });
+    
+    icons.insert("browser-isolation", IconData {
+        svg: include_str!("../icons/browser-isolation.svg"),
+        name: "Browser Isolation",
+        description: "Isolate risky web browsing to protect devices from threats.",
+        doc_url: "https://developers.cloudflare.com/cloudflare-one/policies/browser-isolation/",
+    });
+    
     icons.insert("browser-rendering", IconData {
         svg: include_str!("../icons/browser-rendering.svg"),
         name: "Browser Rendering",
@@ -112,11 +156,32 @@ fn get_icons_map() -> HashMap<&'static str, IconData> {
         doc_url: "https://developers.cloudflare.com/cache/",
     });
     
+    icons.insert("cache-reserve", IconData {
+        svg: include_str!("../icons/cache-reserve.svg"),
+        name: "Cache Reserve",
+        description: "Persistent cache storage to reduce origin requests.",
+        doc_url: "https://developers.cloudflare.com/cache/advanced-configuration/cache-reserve/",
+    });
+    
+    icons.insert("casb", IconData {
+        svg: include_str!("../icons/casb.svg"),
+        name: "CASB",
+        description: "Cloud Access Security Broker for SaaS application security.",
+        doc_url: "https://developers.cloudflare.com/cloudflare-one/applications/scan-apps/",
+    });
+    
     icons.insert("cloudflare", IconData {
         svg: include_str!("../icons/cloudflare.svg"),
         name: "Cloudflare",
         description: "The connectivity cloud that protects everything you connect to the Internet.",
         doc_url: "https://www.cloudflare.com/",
+    });
+    
+    icons.insert("cloudflare-one", IconData {
+        svg: include_str!("../icons/cloudflare-one.svg"),
+        name: "Cloudflare One",
+        description: "Connect and secure your teams, devices, and networks.",
+        doc_url: "https://developers.cloudflare.com/cloudflare-one/",
     });
     
     icons.insert("cloudflare-pages", IconData {
@@ -168,11 +233,32 @@ fn get_icons_map() -> HashMap<&'static str, IconData> {
         doc_url: "https://developers.cloudflare.com/cloudflare-one/insights/dex/",
     });
     
+    icons.insert("dlp", IconData {
+        svg: include_str!("../icons/dlp.svg"),
+        name: "DLP",
+        description: "Data Loss Prevention to protect sensitive data.",
+        doc_url: "https://developers.cloudflare.com/cloudflare-one/policies/data-loss-prevention/",
+    });
+    
     icons.insert("dns", IconData {
         svg: include_str!("../icons/dns.svg"),
         name: "DNS",
         description: "Enterprises trust Cloudflare to be their authoritative DNS provider.",
         doc_url: "https://developers.cloudflare.com/dns/",
+    });
+    
+    icons.insert("dnssec", IconData {
+        svg: include_str!("../icons/dnssec.svg"),
+        name: "DNSSEC",
+        description: "Cryptographically sign DNS records to prevent tampering.",
+        doc_url: "https://developers.cloudflare.com/dns/dnssec/",
+    });
+    
+    icons.insert("durable-objects", IconData {
+        svg: include_str!("../icons/durable-objects.svg"),
+        name: "Durable Objects",
+        description: "Low-latency coordination and consistent storage for distributed applications.",
+        doc_url: "https://developers.cloudflare.com/durable-objects/",
     });
     
     icons.insert("email-routing", IconData {
@@ -210,11 +296,25 @@ fn get_icons_map() -> HashMap<&'static str, IconData> {
         doc_url: "https://developers.cloudflare.com/images/",
     });
     
+    icons.insert("kv", IconData {
+        svg: include_str!("../icons/kv.svg"),
+        name: "KV",
+        description: "Globally distributed, low-latency key-value data storage.",
+        doc_url: "https://developers.cloudflare.com/kv/",
+    });
+    
     icons.insert("load-balancing", IconData {
         svg: include_str!("../icons/load-balancing.svg"),
         name: "Load Balancing",
         description: "Increase application performance, availability, and scalability.",
         doc_url: "https://developers.cloudflare.com/load-balancing/",
+    });
+    
+    icons.insert("logs", IconData {
+        svg: include_str!("../icons/logs.svg"),
+        name: "Logs",
+        description: "Access detailed logs of your Cloudflare traffic and events.",
+        doc_url: "https://developers.cloudflare.com/logs/",
     });
     
     icons.insert("magic-firewall", IconData {
@@ -238,11 +338,18 @@ fn get_icons_map() -> HashMap<&'static str, IconData> {
         doc_url: "https://developers.cloudflare.com/magic-wan/",
     });
     
-    icons.insert("analytics-engine", IconData {
-        svg: include_str!("../icons/analytics-engine.svg"),
-        name: "Analytics Engine",
-        description: "Build SQL-compatible, scalable time-series analytics without limits.",
-        doc_url: "https://developers.cloudflare.com/analytics/analytics-engine/",
+    icons.insert("network-interconnect", IconData {
+        svg: include_str!("../icons/network-interconnect.svg"),
+        name: "Network Interconnect",
+        description: "Private network interconnections with Cloudflare.",
+        doc_url: "https://developers.cloudflare.com/network-interconnect/",
+    });
+    
+    icons.insert("page-shield", IconData {
+        svg: include_str!("../icons/page-shield.svg"),
+        name: "Page Shield",
+        description: "Protect your website from malicious JavaScript.",
+        doc_url: "https://developers.cloudflare.com/page-shield/",
     });
     
     icons.insert("pages", IconData {
@@ -280,6 +387,13 @@ fn get_icons_map() -> HashMap<&'static str, IconData> {
         doc_url: "https://developers.cloudflare.com/r2/",
     });
     
+    icons.insert("radar", IconData {
+        svg: include_str!("../icons/radar.svg"),
+        name: "Radar",
+        description: "Internet traffic and attack trends data.",
+        doc_url: "https://developers.cloudflare.com/radar/",
+    });
+    
     icons.insert("registrar", IconData {
         svg: include_str!("../icons/registrar.svg"),
         name: "Registrar",
@@ -308,6 +422,13 @@ fn get_icons_map() -> HashMap<&'static str, IconData> {
         doc_url: "https://developers.cloudflare.com/spectrum/",
     });
     
+    icons.insert("ssl", IconData {
+        svg: include_str!("../icons/ssl.svg"),
+        name: "SSL",
+        description: "SSL/TLS encryption for your websites and APIs.",
+        doc_url: "https://developers.cloudflare.com/ssl/",
+    });
+    
     icons.insert("ssl-tls", IconData {
         svg: include_str!("../icons/ssl-tls.svg"),
         name: "SSL/TLS",
@@ -320,6 +441,13 @@ fn get_icons_map() -> HashMap<&'static str, IconData> {
         name: "Stream",
         description: "Stream videos on-demand or live to millions of viewers.",
         doc_url: "https://developers.cloudflare.com/stream/",
+    });
+    
+    icons.insert("time-services", IconData {
+        svg: include_str!("../icons/time-services.svg"),
+        name: "Time Services",
+        description: "Accurate time synchronization services.",
+        doc_url: "https://developers.cloudflare.com/time-services/",
     });
     
     icons.insert("turnstile", IconData {
