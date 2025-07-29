@@ -57,10 +57,22 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
         })
         .get_async("/api/excalidraw-backup", |_req, _ctx| async move {
             let icons = list_icons();
+            let mut files = serde_json::Map::new();
             let excalidraw_elements: Vec<serde_json::Value> = icons.iter().enumerate().map(|(i, name)| {
                 let svg = get_icon_svg(name).unwrap_or_default();
                 let standardized = standardize_svg(&svg);
-                create_excalidraw_element(name, &standardized, i)
+                let file_id = format!("cf-{}", name);
+                
+                // Add file data to files map
+                files.insert(file_id.clone(), serde_json::json!({
+                    "mimeType": "image/svg+xml",
+                    "id": file_id.clone(),
+                    "dataURL": svg_to_excalidraw(&standardized),
+                    "created": 1700000000000i64,
+                    "lastRetrieved": 1700000000000i64
+                }));
+                
+                create_excalidraw_element(name, &file_id, i)
             }).collect();
             
             let backup = serde_json::json!({
@@ -72,7 +84,7 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
                     "gridSize": null,
                     "viewBackgroundColor": "#ffffff"
                 },
-                "files": {}
+                "files": files
             });
             
             Response::from_json(&backup)
@@ -332,7 +344,7 @@ fn svg_to_excalidraw(svg: &str) -> String {
     format!("data:image/svg+xml;base64,{}", general_purpose::STANDARD.encode(svg))
 }
 
-fn create_excalidraw_element(name: &str, svg: &str, index: usize) -> serde_json::Value {
+fn create_excalidraw_element(name: &str, file_id: &str, index: usize) -> serde_json::Value {
     let x = (index % 10) as f64 * 150.0;
     let y = (index / 10) as f64 * 150.0;
     
@@ -359,9 +371,7 @@ fn create_excalidraw_element(name: &str, svg: &str, index: usize) -> serde_json:
         "updated": 1,
         "link": null,
         "locked": false,
-        "fileId": format!("cf-{}", name),
-        "scale": [1, 1],
-        "mimeType": "image/svg+xml",
-        "dataURL": svg_to_excalidraw(svg)
+        "fileId": file_id,
+        "scale": [1, 1]
     })
 }

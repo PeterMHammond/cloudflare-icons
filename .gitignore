@@ -34,3 +34,4 @@ test-results/
 playwright-report/
 tests/screenshots/
 playwright/.cache/
+*.log

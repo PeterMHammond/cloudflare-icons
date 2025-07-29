@@ -8,11 +8,3 @@ command = "cargo install -q worker-build && worker-build --release"
 [vars]
 WORKERS_RS_VERSION = "0.3.0"
 
-[[r2_buckets]]
-binding = "ICONS"
-bucket_name = "cloudflare-icons"
-
-[[kv_namespaces]]
-binding = "CACHE"
-id = "your-kv-namespace-id"
-preview_id = "your-kv-namespace-preview-id"
