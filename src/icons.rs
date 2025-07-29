@@ -1,5 +1,5 @@
 // Generated Cloudflare icons from official sources
-// Total icons: 50
+// Total icons: 44
 
 use std::collections::HashMap;
 use serde::{Serialize, Deserialize};
@@ -22,9 +22,6 @@ pub fn list_icons() -> Vec<&'static str> {
         "cache",
         "cloudflare",
         "cloudflare-one",
-        "cloudflare-pages",
-        "cloudflare-workers",
-        "cloudflare-zero-trust",
         "d1",
         "ddos-protection",
         "dns",
@@ -51,7 +48,6 @@ pub fn list_icons() -> Vec<&'static str> {
         "ruleset-engine",
         "security-center",
         "spectrum",
-        "ssl",
         "ssl-tls",
         "stream",
         "time-services",
@@ -61,8 +57,6 @@ pub fn list_icons() -> Vec<&'static str> {
         "waiting-room",
         "workers",
         "workers-ai",
-        "workers-durable-objects",
-        "workers-kv",
         "zaraz",
     ]
 }
@@ -136,26 +130,6 @@ fn get_icons_map() -> HashMap<&'static str, IconData> {
         doc_url: "https://developers.cloudflare.com/cloudflare-one/",
     });
     
-    icons.insert("cloudflare-pages", IconData {
-        svg: include_str!("../icons/cloudflare-pages.svg"),
-        name: "Cloudflare Pages",
-        description: "Deploy dynamic front-end applications in record time.",
-        doc_url: "https://developers.cloudflare.com/pages/",
-    });
-    
-    icons.insert("cloudflare-workers", IconData {
-        svg: include_str!("../icons/cloudflare-workers.svg"),
-        name: "Cloudflare Workers",
-        description: "Deploy serverless code instantly across the globe.",
-        doc_url: "https://developers.cloudflare.com/workers/",
-    });
-    
-    icons.insert("cloudflare-zero-trust", IconData {
-        svg: include_str!("../icons/cloudflare-zero-trust.svg"),
-        name: "Cloudflare Zero Trust",
-        description: "Cloudflare Zero Trust replaces legacy security perimeters with Cloudflare's network, providing secure access to any application, on any device, in any location.",
-        doc_url: "https://developers.cloudflare.com/cloudflare-one/",
-    });
     
     icons.insert("d1", IconData {
         svg: include_str!("../icons/d1.svg"),
@@ -339,13 +313,6 @@ fn get_icons_map() -> HashMap<&'static str, IconData> {
         doc_url: "https://developers.cloudflare.com/spectrum/",
     });
     
-    icons.insert("ssl", IconData {
-        svg: include_str!("../icons/ssl.svg"),
-        name: "SSL",
-        description: "SSL/TLS encryption for your websites and APIs.",
-        doc_url: "https://developers.cloudflare.com/ssl/",
-    });
-    
     icons.insert("ssl-tls", IconData {
         svg: include_str!("../icons/ssl-tls.svg"),
         name: "SSL/TLS",
@@ -407,20 +374,6 @@ fn get_icons_map() -> HashMap<&'static str, IconData> {
         name: "Workers AI",
         description: "Run AI models with serverless inference on Cloudflare's network.",
         doc_url: "https://developers.cloudflare.com/workers-ai/",
-    });
-    
-    icons.insert("workers-durable-objects", IconData {
-        svg: include_str!("../icons/workers-durable-objects.svg"),
-        name: "Workers Durable Objects",
-        description: "Globally unique instances for coordination and storage.",
-        doc_url: "https://developers.cloudflare.com/durable-objects/",
-    });
-    
-    icons.insert("workers-kv", IconData {
-        svg: include_str!("../icons/workers-kv.svg"),
-        name: "Workers KV",
-        description: "Low-latency, key-value data storage.",
-        doc_url: "https://developers.cloudflare.com/kv/",
     });
     
     icons.insert("zaraz", IconData {
