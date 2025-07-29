@@ -39,15 +39,22 @@ test.describe('Excalidraw Download', () => {
     expect(excalidrawData).toHaveProperty('files');
     expect(excalidrawData).toHaveProperty('appState');
     
-    // Verify we have 44 elements
-    expect(excalidrawData.elements).toHaveLength(44);
+    // Verify we have 88 elements (44 icons + 44 text labels)
+    expect(excalidrawData.elements).toHaveLength(88);
     
     // Verify we have 44 files
     const fileKeys = Object.keys(excalidrawData.files);
     expect(fileKeys).toHaveLength(44);
     
-    // Verify each element has proper structure
-    excalidrawData.elements.forEach((element, index) => {
+    // Separate image and text elements
+    const imageElements = excalidrawData.elements.filter(el => el.type === 'image');
+    const textElements = excalidrawData.elements.filter(el => el.type === 'text');
+    
+    expect(imageElements).toHaveLength(44);
+    expect(textElements).toHaveLength(44);
+    
+    // Verify each image element has proper structure
+    imageElements.forEach((element, index) => {
       expect(element).toHaveProperty('id');
       expect(element).toHaveProperty('type', 'image');
       expect(element).toHaveProperty('x');
@@ -77,12 +84,35 @@ test.describe('Excalidraw Download', () => {
       expect(svgContent).toContain('</svg>');
     });
     
-    // Verify grid layout (10 columns)
-    excalidrawData.elements.forEach((element, index) => {
+    // Verify each text element has proper structure
+    textElements.forEach((element, index) => {
+      expect(element).toHaveProperty('id');
+      expect(element).toHaveProperty('type', 'text');
+      expect(element).toHaveProperty('x');
+      expect(element).toHaveProperty('y');
+      expect(element).toHaveProperty('width', 48);
+      expect(element).toHaveProperty('text');
+      expect(element).toHaveProperty('fontSize', 16);
+      expect(element).toHaveProperty('fontFamily', 5);
+      expect(element).toHaveProperty('textAlign', 'center');
+      expect(element).toHaveProperty('verticalAlign', 'top');
+    });
+    
+    // Verify grid layout for image elements (10 columns)
+    imageElements.forEach((element, index) => {
       const expectedX = (index % 10) * 150;
       const expectedY = Math.floor(index / 10) * 150;
       expect(element.x).toBe(expectedX);
       expect(element.y).toBe(expectedY);
+    });
+    
+    // Verify text elements are positioned below their corresponding icons
+    textElements.forEach((textEl) => {
+      const iconName = textEl.id.replace('text-', '');
+      const iconEl = imageElements.find(img => img.id === `cf-icon-${iconName}`);
+      expect(iconEl).toBeDefined();
+      expect(textEl.x).toBe(iconEl.x);
+      expect(textEl.y).toBeCloseTo(iconEl.y + iconEl.height + -3.5, 1);
     });
     
     // Clean up

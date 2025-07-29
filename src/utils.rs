@@ -102,6 +102,87 @@ fn normalize_viewbox(svg: &str) -> String {
     result
 }
 
+pub fn add_label_to_svg(svg: &str, label: &str) -> String {
+    // Parse the viewBox to determine dimensions
+    let mut viewbox_values = vec![0.0, 0.0, 48.0, 48.0];
+    if let Some(start) = svg.find("viewBox=\"") {
+        if let Some(end) = svg[start+9..].find("\"") {
+            let viewbox_str = &svg[start+9..start+9+end];
+            let parts: Vec<&str> = viewbox_str.split_whitespace().collect();
+            if parts.len() == 4 {
+                if let (Ok(x), Ok(y), Ok(w), Ok(h)) = (
+                    parts[0].parse::<f64>(),
+                    parts[1].parse::<f64>(),
+                    parts[2].parse::<f64>(),
+                    parts[3].parse::<f64>()
+                ) {
+                    viewbox_values = vec![x, y, w, h];
+                }
+            }
+        }
+    }
+    
+    let width = viewbox_values[2];
+    let height = viewbox_values[3];
+    let new_height = height + 16.0; // Add space for text (matching Excalidraw)
+    
+    // Update viewBox to include text area
+    let mut result = svg.replace(
+        &format!("viewBox=\"{} {} {} {}\"", viewbox_values[0], viewbox_values[1], width, height),
+        &format!("viewBox=\"{} {} {} {}\"", viewbox_values[0], viewbox_values[1], width, new_height)
+    );
+    
+    // Better font sizing based on icon dimensions
+    let font_size = if width <= 24.0 { 
+        10.0 
+    } else if width <= 48.0 { 
+        16.0 
+    } else { 
+        width / 3.0 
+    };
+    
+    // For special case: multi-word labels like "Durable Objects"
+    let text_element = if label.contains(' ') {
+        let words: Vec<&str> = label.split(' ').collect();
+        if words.len() == 2 {
+            format!(
+                "<text x=\"{}\" y=\"{}\" text-anchor=\"middle\" font-family=\"Arial, sans-serif\" font-size=\"{}\" fill=\"#1e1e1e\">\n        <tspan x=\"{}\" dy=\"0\">{}</tspan>\n        <tspan x=\"{}\" dy=\"{}\">{}</tspan>\n    </text>",
+                width / 2.0,
+                height + 4.0,
+                font_size,
+                width / 2.0,
+                words[0],
+                width / 2.0,
+                font_size * 0.75,
+                words[1]
+            )
+        } else {
+            // For labels with more than 2 words, use single line
+            format!(
+                "<text x=\"{}\" y=\"{}\" text-anchor=\"middle\" font-family=\"Arial, sans-serif\" font-size=\"{}\" fill=\"#1e1e1e\">{}</text>",
+                width / 2.0,
+                height + 12.0,
+                font_size,
+                label
+            )
+        }
+    } else {
+        // Single word labels
+        format!(
+            "<text x=\"{}\" y=\"{}\" text-anchor=\"middle\" font-family=\"Arial, sans-serif\" font-size=\"{}\" fill=\"#1e1e1e\">{}</text>",
+            width / 2.0,
+            height + 12.0,
+            font_size,
+            label
+        )
+    };
+    
+    // Insert text element before closing </svg>
+    result = result.replace("</svg>", &format!("{}\n</svg>", text_element));
+    
+    result
+}
+
 
 fn apply_transform_to_paths(svg: &str) -> String {
     // For SVGs with transform scales, we'll keep the transform
