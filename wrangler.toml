@@ -3,7 +3,7 @@ main = "build/worker/shim.mjs"
 compatibility_date = "2024-01-01"
 
 [build]
-command = "cargo install -q worker-build && worker-build --release"
+command = "cargo install -q worker-build@0.7.5 && worker-build --release"
 
 [vars]
 WORKERS_RS_VERSION = "0.3.0"
